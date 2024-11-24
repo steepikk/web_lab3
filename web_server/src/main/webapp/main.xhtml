@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+<h:head>
+    <meta charset="UTF-8"/>
+    <title>Verification Results</title>
+    <h:outputStylesheet name="styles/mainStyle.css"/>
+    <style>
+        body {
+            background-image: url('resources/images/bg.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <section class="container">
+        <div class="header">
+            <h1>
+                Data entry
+            </h1>
+            <hr class="hr-shadow"></hr>
+        </div>
+
+        <div class="main">
+            <h:form id="pointForm">
+                <h:outputLabel for="x" value="X Coordinate: "/>
+                <h:inputText id="x" value="#{resultBean.result.x}" placeholder="-4 ... 4" required="true">
+                    <f:validateDoubleRange minimum="-4" maximum="4"/>
+                    <f:attribute name="placeholder" value="-4 ... 4"/>
+                </h:inputText>
+                <br/>
+
+                <h:outputLabel for="y" value="Y Coordinate: "/>
+                <h:inputText id="y" value="#{resultBean.result.y}" required="true">
+                    <f:validateDoubleRange minimum="-5" maximum="3"/>
+                    <f:attribute name="placeholder" value="-5 ... 3"/>
+                </h:inputText>
+                <br/>
+
+                <h:outputLabel for="r" value="R Value: "/>
+                <h:inputText id="r" value="#{resultBean.result.r}" required="true">
+                    <f:validateDoubleRange minimum="1" maximum="4"/>
+                    <f:attribute name="placeholder" value="1 ... 4"/>
+                </h:inputText>
+                <br/>
+
+                <div id="error-message"></div>
+
+                <h:commandButton value="Submit" action="#{resultBean.checkHit}" styleClass="button"
+                                 onclick="return validateForm();"/>
+            </h:form>
+
+            <div class="canva">
+                <svg id="graph" viewBox="-100 -100 200 200" width="400" height="400" style="background-color: white;">
+                    <rect x="-100" y="0" width="100" height="50" fill="blue"/>
+                    <path d="M0,0 L50,0 A50,50 0 0 1 0,50 Z" fill="blue"/>
+                    <polygon points="0,0 -50,0 0,-50" fill="blue"/>
+                    <line x1="-100" y1="0" x2="100" y2="0" stroke="black"/>
+                    <line x1="0" y1="-100" x2="0" y2="100" stroke="black"/>
+                    <text x="95" y="-5" font-size="10" fill="black">R</text>
+                    <text x="50" y="-5" font-size="10" fill="black">R/2</text>
+                    <text x="-50" y="-5" font-size="10" fill="black">-R/2</text>
+                    <text x="-95" y="-5" font-size="10" fill="black">-R</text>
+                    <text x="5" y="-95" font-size="10" fill="black">R</text>
+                    <text x="5" y="-45" font-size="10" fill="black">R/2</text>
+                    <text x="5" y="45" font-size="10" fill="black">-R/2</text>
+                    <text x="5" y="95" font-size="10" fill="black">-R</text>
+
+                    <circle cx="20" cy="20" id="target-dot" r="3" stroke="white" fill="rgb(222, 159, 66)"></circle>
+                </svg>
+            </div>
+
+            <div id="result-table">
+                <h:panelGroup rendered="#{empty resultBean.results}">
+                    <h:outputText value="The table is empty."/>
+                </h:panelGroup>
+
+                <h:dataTable value="#{resultBean.results}" var="result" rendered="#{not empty resultBean.results}">
+                    <h:column>
+                        <f:facet name="header">X</f:facet>
+                        #{result.x}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Y</f:facet>
+                        #{result.y}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">R</f:facet>
+                        #{result.r}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Result</f:facet>
+                        #{result.result}
+                    </h:column>
+                </h:dataTable>
+
+                <h:form>
+                    <h:commandButton value="Clear History" action="#{resultBean.clearResults}"
+                                     styleClass="clear-button" rendered="#{not empty resultBean.results}" update="result-table" />
+                </h:form>
+            </div>
+        </div>
+
+        <h:form>
+            <h:commandButton value="Go to Index Page"
+                             action="index?faces-redirect=true"
+                             styleClass="button"/>
+        </h:form>
+    </section>
+
+    <h:outputScript name="js/script.js"/>
+
+    <div id="scroll-down-btn">
+        <button onclick="scrollToBottom()" title="Scroll Down">
+            ↓
+        </button>
+    </div>
+
+</h:body>
+</html>

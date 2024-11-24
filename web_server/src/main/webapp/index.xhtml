@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+<h:head>
+    <title>Welcome to Lab Work</title>
+    <h:outputStylesheet name="styles/indexStyle.css"/>
+    <style>
+        body {
+            background-image: url('resources/images/bg.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</h:head>
+<h:body>
+    <section class="container">
+
+        <div class="header">
+            <h1>
+                Student Name: Степан Попов | Group: P3234 | Variant: 413044
+            </h1>
+            <hr class="hr-shadow"></hr>
+        </div>
+
+        <div class="main">
+
+            <div id="clock" class="clock">
+                Loading...
+            </div>
+
+            <h:form>
+                <h:commandButton value="Go to Main Page"
+                                action="main?faces-redirect=true"
+                                styleClass="button"/>
+            </h:form>
+        </div>
+
+        <h:outputScript name="js/clock.js"/>
+
+    </section>
+</h:body>
+</html>

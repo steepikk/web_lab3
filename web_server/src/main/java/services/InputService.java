@@ -1,11 +1,11 @@
-package ru.itmo.web.services;
+package services;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
-import ru.itmo.web.entities.ResultEntity;
+import entities.ResultEntity;
 
 import java.util.Set;
 

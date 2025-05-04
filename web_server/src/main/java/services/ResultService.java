@@ -1,10 +1,10 @@
-package ru.itmo.web.services;
+package services;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import ru.itmo.web.entities.ResultEntity;
+import entities.ResultEntity;
 
 import java.io.Serializable;
 import java.util.List;

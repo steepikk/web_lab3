@@ -1,18 +1,15 @@
-package ru.itmo.web.beans;
+package beans;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.itmo.web.entities.ResultEntity;
-import ru.itmo.web.services.InputService;
-import ru.itmo.web.services.ResultService;
+import entities.ResultEntity;
+import services.InputService;
+import services.ResultService;
 
 import java.io.Serializable;
 import java.util.List;

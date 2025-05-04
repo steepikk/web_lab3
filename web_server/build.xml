@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="lab3" default="build">
+
+    <property file="build.properties"/>
+
+    <path id="classpath">
+        <fileset dir="${lib.dir}" includes="*.jar"/>
+        <fileset dir="${main.dir}" includes="*.java"/>
+        <pathelement location="${classes.dir}"/>
+    </path>
+
+    <path id="classpath.test">
+        <pathelement location="${junit}"/>
+        <pathelement location="${mockito}"/>
+        <pathelement location="${classes.dir}"/>
+    </path>
+
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="${lib.dir}/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+
+    <target name="compile" depends="clean">
+        <echo message="***** COMPILE STARTED *****"/>
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${test.classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath" includeantruntime="false"/>
+        <echo message="***** COMPILE COMPLETED *****"/>
+    </target>
+
+    <target name="build" depends="compile">
+        <echo message="***** BUILD STARTED *****"/>
+        <copy todir="${build.dir}">
+            <fileset dir="${web.dir}"/>
+        </copy>
+        <copy todir="${build.dir.lib}">
+            <fileset dir="${lib.dir}"/>
+        </copy>
+        <copy todir="${classes.dir}">
+            <fileset dir="${resources.dir}"/>
+        </copy>
+        <jar destfile="${build.dir}/${ant.project.name}.jar">
+            <fileset dir="${classes.dir}"/>
+            <manifest>
+                <attribute name="Created-By" value="nyapsilon"/>
+                <attribute name="Manifest-Version" value="1.0"/>
+                <attribute name="Main-Class" value="NoClass"/>
+            </manifest>
+        </jar>
+        <war destfile="${build.dir}/${ant.project.name}.war" webxml="${build.web.xml}">
+            <fileset dir="${build.dir}"/>
+            <manifest>
+                <attribute name="Created-By" value="nyapsilon"/>
+                <attribute name="Manifest-Version" value="1.0"/>
+                <attribute name="Main-Class" value="NoClass"/>
+            </manifest>
+        </war>
+        <echo message="***** BUILD COMPLETED *****"/>
+    </target>
+
+    <target name="clean">
+        <echo message="***** CLEAN STARTED *****"/>
+        <delete dir="${build.dir}"/>
+        <echo message="***** CLEAN COMPLETED *****"/>
+    </target>
+
+    <target name="test" depends="build">
+        <echo message="***** TEST STARTED *****"/>
+        <mkdir dir="${test.classes.dir}"/>
+        <javac destdir="${test.classes.dir}" srcdir="${test.dir}" includeantruntime="false" encoding="utf-8">
+            <classpath refid="classpath.test"/>
+        </javac>
+        <junit printsummary="on" haltonfailure="true" haltonerror="true">
+            <classpath>
+                <path refid="classpath.test"/>
+                <pathelement location="${test.classes.dir}"/>
+            </classpath>
+        </junit>
+        <echo message="***** TEST COMPLETED *****"/>
+    </target>
+
+    <target name="xml">
+        <echo message="***** XML STARTED *****"/>
+        <echo>XML project files validation...</echo>
+        <xmlvalidate lenient="true">
+            <fileset dir="./" includes="**/*.xml">
+                <exclude name=".idea/**"/>
+            </fileset>
+        </xmlvalidate>
+        <echo message="***** XML COMPLETED *****"/>
+    </target>
+
+    <target name="history">
+        <echo message="====== HISTORY STARTED ======"/>
+        <trycatch>
+            <try>
+                <antcall target="compile" inheritAll="true"/>
+                <echo message="CURRENT VERSION IS CORRECT!"/>
+            </try>
+            <catch>
+                <exec executable="git" outputproperty="first.rev" failonerror="true">
+                    <arg value="rev-list"/>
+                    <arg value="--max-parents=0"/>
+                    <arg value="HEAD"/>
+                </exec>
+                <property name="first.rev" value="${first.rev}.trim()"/>
+
+                <property name="lastWorking" value=""/>
+                <load-previous-version/>
+                <history-loop/>
+            </catch>
+        </trycatch>
+        <echo message="====== HISTORY COMPLETED ======"/>
+    </target>
+
+    <macrodef name="history-loop">
+        <sequential>
+            <exec executable="git" outputproperty="current.rev" failonerror="true">
+                <arg value="rev-parse"/>
+                <arg value="HEAD"/>
+            </exec>
+            <echo message="current revision: ${current.rev}"/>
+
+            <echo message="trying compile current revision..."/>
+            <trycatch>
+                <try>
+                    <antcall target="compile"/>
+
+                    <echo message="last working revision: ${current.rev}"/>
+                    <generate-diff/>
+                </try>
+                <catch>
+                    <if>
+                        <equals arg1="${current.rev}" arg2="${first.rev}"/>
+                        <then>
+                            <echo message="NO WORKING COMMITS IN YOUR REPO"/>
+                        </then>
+                        <else>
+                            <load-previous-version/>
+
+                            <history-loop/>
+                        </else>
+                    </if>
+                </catch>
+            </trycatch>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="generate-diff">
+        <sequential>
+            <echo message="generation diff between last working and next..."/>
+            <exec executable="git" outputproperty="after.rev" failonerror="false">
+                <arg line="rev-parse HEAD^@"/>
+            </exec>
+
+            <exec executable="git" output="diff.txt" failonerror="false">
+                <arg value="diff"/>
+                <arg value="${current.rev}"/>
+                <arg value="${after.rev}"/>
+            </exec>
+            <echo message="diffs saved to diff.txt."/>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="load-previous-version">
+        <sequential>
+            <echo message="checking out previous commit..."/>
+            <exec executable="git" failonerror="true">
+                <arg value="restore"/>
+                <arg value="--source"/>
+                <arg value="HEAD~1"/>
+                <arg value="--overlay"/>
+                <arg value="${src.dir}"/>
+            </exec>
+        </sequential>
+    </macrodef>
+</project>

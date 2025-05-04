@@ -1,15 +1,15 @@
-package ru.itmo.web.valiadtion;
+package valiadtion;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
-@Constraint(validatedBy = ValidatorX.class)
+@Constraint(validatedBy = ValidatorY.class)
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidationX {
-    String message() default "Invalid value for X. Must be between -4 and 4.";
+public @interface ValidationY {
+    String message() default "Invalid value for Y. Must be between -5 and 3.";
 
     Class<?>[] groups() default {};
 

@@ -1,4 +1,4 @@
-package ru.itmo.web.valiadtion;
+package valiadtion;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

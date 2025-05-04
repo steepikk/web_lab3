@@ -25,7 +25,6 @@ public class ResultBean implements Serializable {
     @Inject
     private InputService inputService;
 
-
     @Getter
     @Setter
     private ResultEntity result = new ResultEntity();
